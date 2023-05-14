@@ -12,6 +12,7 @@ namespace NES_emu.CPU.Attributes
             Console.WriteLine($"Got unimplemented instruction! Opcode: {cpu.CurrentOpcode:X2}");
         };
         public bool CycleOnPageChange { get; set; }
+        public string Name { get; set; } = "Unimplemented";
         public Instruction(byte opcode, AddressingMode addressingMode, int cycles, bool cycleOnPageChange = false)         
         {
             Opcode = opcode;

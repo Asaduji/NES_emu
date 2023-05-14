@@ -32,6 +32,7 @@ namespace NES_emu.CPU
             _addressingModes = new Func<Cpu, bool>[addressingModeCount];
 
             //add addressing modes to the array
+            _addressingModes[(int)AddressingMode.IMP] = IMP.Fetch;
             _addressingModes[(int)AddressingMode.IMM] = IMM.Fetch;
             _addressingModes[(int)AddressingMode.ZP] = ZP.Fetch;
             _addressingModes[(int)AddressingMode.ZPX] = ZPX.Fetch;
@@ -43,6 +44,7 @@ namespace NES_emu.CPU
             _addressingModes[(int)AddressingMode.ABY] = ABY.Fetch;
             _addressingModes[(int)AddressingMode.IND] = IND.Fetch;
             _addressingModes[(int)AddressingMode.REL] = REL.Fetch;
+            _addressingModes[(int)AddressingMode.ACC] = ACC.Fetch;
 
             //set bus
             _bus = bus;
@@ -73,6 +75,7 @@ namespace NES_emu.CPU
 
                 foreach (var instruction in attributes)
                 {
+                    instruction.Name = type.Name;
                     instruction.Execute = execute;
                     _opcodeTable[instruction.Opcode] = instruction;
                     ++count;
@@ -91,11 +94,11 @@ namespace NES_emu.CPU
         {
             if (value)
             {
-                PC |= (byte)flag;
+                P |= (byte)flag;
             }
             else
             {
-                PC &= (byte)~flag;
+                P &= (byte)~flag;
             }
         }
 
@@ -170,7 +173,7 @@ namespace NES_emu.CPU
                 {
                     ++Cycles;
                 }
-
+                Console.WriteLine($"Executed: (0x{CurrentOpcode}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC}");
             }
             --Cycles;
         }

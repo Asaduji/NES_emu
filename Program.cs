@@ -10,10 +10,17 @@ namespace NES_emu
             var bus = new Bus();
             var cpu = new Cpu(bus);
 
+            cpu.Reset();
 
+            cpu.A = 0x62;
 
-            var value = (byte)(1);
-            Console.WriteLine($"{value:X2}");
+            for (var i = 0; i < 8; i++)
+            {
+                cpu.Clock();
+            }
+            
+
+            Console.WriteLine($"{cpu.A:X2}, {(byte)(0x62 & 0x02):X2}");
         }
     }
 }
