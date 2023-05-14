@@ -2,7 +2,7 @@
 {
     public interface IAddressingMode
     {
-        //returns true if the addressing mode takes 1 more cycle (only used in structions that specifically specify this)
+        //returns true if the addressing mode has crossed a page
         public abstract static bool Fetch(Cpu cpu);
     }
 }

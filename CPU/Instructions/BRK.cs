@@ -7,7 +7,7 @@ namespace NES_emu.CPU.Opcodes
     [Instruction(0x00, AddressingMode.IMP, 7)]
     public class BRK : IInstructionHandler
     {
-        public static bool Execute(Cpu cpu)
+        public static void Execute(Cpu cpu)
         {
             ++cpu.PC;
 
@@ -23,9 +23,6 @@ namespace NES_emu.CPU.Opcodes
             byte lowByte = cpu.Read(0xFFFE);
 
             cpu.PC = (ushort)(highByte << 8 | lowByte);
-            
-
-            return false;
         }
     }
 }

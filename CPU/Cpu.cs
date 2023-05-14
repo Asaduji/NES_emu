@@ -22,6 +22,8 @@ namespace NES_emu.CPU
 
         //helpers
         public ushort CurrentAddress { get; set; }
+        public byte CurrentOpcode { get; set; }
+        public AddressingMode CurrentAddressingMode { get; set; }
         public int Cycles { get; set; }
 
         public Cpu(Bus bus)
@@ -67,7 +69,7 @@ namespace NES_emu.CPU
                     continue;
                 }
 
-                Func<Cpu, bool> execute = (Func<Cpu, bool>)Delegate.CreateDelegate(typeof(Func<Cpu, bool>), executeMethodInfo);
+                Action<Cpu> execute = (Action<Cpu>)Delegate.CreateDelegate(typeof(Action<Cpu>), executeMethodInfo);
 
                 foreach (var instruction in attributes)
                 {
@@ -78,10 +80,6 @@ namespace NES_emu.CPU
             }
 
             Console.WriteLine($"Loaded {count} opcodes");
-
-            _opcodeTable[0].Execute(this);
-
-            Console.WriteLine("BRK executed");
         }
 
         public bool GetFlag(Flag flag)
@@ -150,6 +148,31 @@ namespace NES_emu.CPU
             CurrentAddress = 0;
 
             Cycles = 7;
+        }
+
+        public void Clock()
+        {
+            if (Cycles == 0)
+            {
+                CurrentOpcode = ReadNext();
+
+                var instruction = _opcodeTable[CurrentOpcode];
+
+                Cycles = instruction.Cycles;
+
+                CurrentAddressingMode = instruction.AddressingMode;
+
+                var pageChanged = _addressingModes[(int)instruction.AddressingMode](this);
+
+                instruction.Execute(this);
+
+                if (pageChanged && instruction.CycleOnPageChange)
+                {
+                    ++Cycles;
+                }
+
+            }
+            --Cycles;
         }
     }
 }
