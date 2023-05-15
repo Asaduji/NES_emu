@@ -2,6 +2,6 @@
 {
     public interface IInstructionHandler
     {
-        public abstract static void Execute(Cpu cpu);
+        public abstract static bool Execute(Cpu cpu);
     }
 }

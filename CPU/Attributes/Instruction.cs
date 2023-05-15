@@ -8,17 +8,18 @@ namespace NES_emu.CPU.Attributes
         public byte Opcode { get; set; }
         public AddressingMode AddressingMode { get; set; }
         public int Cycles { get; set; }
-        public Action<Cpu> Execute { get; set; } = (cpu) => {
+        public bool ExtraCycleOnPageCross { get; set; }
+        public Func<Cpu, bool> Execute { get; set; } = (cpu) => {
             Console.WriteLine($"Got unimplemented instruction! Opcode: {cpu.CurrentOpcode:X2}");
+            return false;
         };
-        public bool CycleOnPageChange { get; set; }
         public string Name { get; set; } = "Unimplemented";
-        public Instruction(byte opcode, AddressingMode addressingMode, int cycles, bool cycleOnPageChange = false)         
+        public Instruction(byte opcode, AddressingMode addressingMode, int cycles, bool extraCycleOnPageCross = false)         
         {
             Opcode = opcode;
             AddressingMode = addressingMode;
             Cycles = cycles;
-            CycleOnPageChange = cycleOnPageChange;
+            ExtraCycleOnPageCross = extraCycleOnPageCross;
         }
     }
 }

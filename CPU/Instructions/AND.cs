@@ -13,7 +13,7 @@ namespace NES_emu.CPU.Instructions
     [Instruction(0x31, AddressingMode.IZY, 5, true)]
     public class AND : IInstructionHandler
     {
-        public static void Execute(Cpu cpu)
+        public static bool Execute(Cpu cpu)
         {
             byte value = cpu.Read(cpu.CurrentAddress);
 
@@ -21,7 +21,9 @@ namespace NES_emu.CPU.Instructions
 
             cpu.SetFlag(Flag.Z, cpu.A == 0x00);
 
-            cpu.SetFlag(Flag.N, (cpu.A & 1 << 8) != 0);
+            cpu.SetFlag(Flag.N, (cpu.A & (1 << 7)) != 0);
+
+            return true;
         }
     }
 }

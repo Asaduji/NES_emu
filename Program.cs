@@ -18,7 +18,7 @@ namespace NES_emu
             {
                 cpu.Clock();
             }
-            
+
 
             Console.WriteLine($"{cpu.A:X2}, {(byte)(0x62 & 0x02):X2}");
         }

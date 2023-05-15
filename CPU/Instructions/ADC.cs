@@ -13,23 +13,23 @@ namespace NES_emu.CPU.Instructions
     [Instruction(0x71, AddressingMode.IZY, 5, true)]
     public class ADC : IInstructionHandler
     {
-        public static void Execute(Cpu cpu)
+        public static bool Execute(Cpu cpu)
         {
             byte value = cpu.Read(cpu.CurrentAddress);
 
             ushort sum = (ushort)(cpu.A + value);
 
-
-            cpu.SetFlag(Flag.V, ((value ^ cpu.A ^ (byte)sum) & (1 << 8)) != 0 && (byte)(sum >> 8) != 0);
+            cpu.SetFlag(Flag.V, ((value ^ cpu.A) & (1 << 7)) == 0 && ((value ^ (byte)sum) & (1 << 7)) == 0);
             
-
             cpu.A = (byte)sum;
 
             cpu.SetFlag(Flag.C, sum > 0xFF);
 
             cpu.SetFlag(Flag.Z, cpu.A == 0x00);
 
-            cpu.SetFlag(Flag.N, (cpu.A & 1 << 8) != 0);
+            cpu.SetFlag(Flag.N, (cpu.A & (1 << 7)) != 0);
+
+            return true;
         }
     }
 }

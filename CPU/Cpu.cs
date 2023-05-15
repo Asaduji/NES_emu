@@ -71,7 +71,7 @@ namespace NES_emu.CPU
                     continue;
                 }
 
-                Action<Cpu> execute = (Action<Cpu>)Delegate.CreateDelegate(typeof(Action<Cpu>), executeMethodInfo);
+                Func<Cpu, bool> execute = (Func<Cpu, bool>)Delegate.CreateDelegate(typeof(Func<Cpu, bool>), executeMethodInfo);
 
                 foreach (var instruction in attributes)
                 {
@@ -157,6 +157,9 @@ namespace NES_emu.CPU
         {
             if (Cycles == 0)
             {
+                //unused flag is always 1
+                SetFlag(Flag.U, true);
+
                 CurrentOpcode = ReadNext();
 
                 var instruction = _opcodeTable[CurrentOpcode];
@@ -167,9 +170,10 @@ namespace NES_emu.CPU
 
                 var pageChanged = _addressingModes[(int)instruction.AddressingMode](this);
 
-                instruction.Execute(this);
-
-                if (pageChanged && instruction.CycleOnPageChange)
+                //some instructions take 1 extra cycle if the page changes when reading the data
+                //but in branches for example it only applies if the branch is taken, so Execute will
+                //return true if the extra cycle should be added in case a page is crossed
+                if (pageChanged && instruction.ExtraCycleOnPageCross && instruction.Execute(this))
                 {
                     ++Cycles;
                 }
