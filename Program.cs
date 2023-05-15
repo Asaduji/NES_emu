@@ -1,4 +1,5 @@
 ﻿using NES_emu.BUS;
+using NES_emu.CARDTIGE;
 using NES_emu.CPU;
 
 namespace NES_emu
@@ -10,17 +11,23 @@ namespace NES_emu
             var bus = new Bus();
             var cpu = new Cpu(bus);
 
+            var rom = File.ReadAllBytes(Directory.GetCurrentDirectory() + @"\nestest.nes");
+
+            var cart = new Cartridge();
+            cart.ReadRom(rom);
+
+            bus.SetCartidge(cart);
+
             cpu.Reset();
 
-            cpu.A = 0x62;
-
-            for (var i = 0; i < 8; i++)
+            while (true)
             {
-                cpu.Clock();
+                for (var i = 0; i < 29833; i++)
+                {
+                    cpu.Clock();
+                }
+                Thread.Sleep(16);
             }
-
-
-            Console.WriteLine($"{cpu.A:X2}, {(byte)(0x62 & 0x02):X2}");
         }
     }
 }

@@ -1,13 +1,15 @@
-﻿namespace NES_emu.BUS
+﻿using NES_emu.CARDTIGE;
+
+namespace NES_emu.BUS
 {
     public class Bus
     {
         //NES ram is 2KB
         private readonly byte[] _ram = new byte[2048];
+
+        private Cartridge _cart { get; set; }
+
         public Bus() {
-            _ram[0] = 0x25;
-            _ram[1] = 0x70;
-            _ram[0x70] = 0x02;
 
         }
         public byte Read(ushort address)
@@ -17,16 +19,29 @@
             {
                 return _ram[address];
             }
+            //ram mirrors
+            else if (address >= 0x0800 && address <= 0x0FFF)
+            {
+                return _ram[address % 0x0800];
+            }
+            else if (address >= 0x1000 && address <= 0x17FF)
+            {
+                return _ram[address % 0x0800];
+            }
+            else if (address >= 0x1800 && address <= 0x1FFF)
+            {
+                return _ram[address % 0x0800];
+            }
+            //cart
+            else if (address >= 0x4020 && address <= 0xFFFF)
+            {
+                return _cart.Read(address);
+            }
+            else if (address >= 0x2000 && address <= 0x3FFF)
+            {
+                return 0x00;
+            }
 
-            //for testing purposes, hardcode the entry point to be the start of the ram
-            else if (address == 0xFFFC)
-            {
-                return 0x00;
-            }
-            else if (address == 0xFFFD)
-            {
-                return 0x00;
-            }
             return 0;
         }
 
@@ -37,6 +52,29 @@
             {
                _ram[address] = data;
             }
+            //ram mirrors
+            else if (address >= 0x0800 && address <= 0x0FFF)
+            {
+                _ram[address % 0x0800] = data;
+            }
+            else if (address >= 0x1000 && address <= 0x17FF)
+            {
+                _ram[address % 0x0800] = data;
+            }
+            else if (address >= 0x1800 && address <= 0x1FFF)
+            {
+                 _ram[address % 0x0800] = data;
+            }
+            //cart
+            else if (address >= 0x4020 && address <= 0xFFFF)
+            {
+                _cart.Write(address, data);
+            }
+        }
+
+        public void SetCartidge(Cartridge cart)
+        {
+            _cart = cart;
         }
     }
 }

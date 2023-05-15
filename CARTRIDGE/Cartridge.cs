@@ -1,17 +1,12 @@
 ﻿using NES_emu.CARTRIDGE.Mappers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NES_emu.CARDTIGE
 {
-    internal class Cartridge
+    public class Cartridge
     {
         private byte[] _prgROM = Array.Empty<byte>();
         private byte[] _chrROM = Array.Empty<byte>();
-        private IMapper _mapper = new Mapper_00(); //use 00 as default
+        private IMapper _mapper = new Mapper_00(new byte[0x4000], new byte[0x4000]); //use 00 as default
 
         public void ReadRom(byte[] rom)
         {
@@ -31,7 +26,7 @@ namespace NES_emu.CARDTIGE
             var flags10 = reader.ReadByte();
 
             //skip padding
-            stream.Position += 4;
+            stream.Position += 5;
 
             //TRAINER
 
@@ -52,8 +47,18 @@ namespace NES_emu.CARDTIGE
 
             if (mapperNumber == 0) 
             { 
-                _mapper = new Mapper_00();
+                _mapper = new Mapper_00(_prgROM, _chrROM);
             }
+        }
+
+        public byte Read(ushort address)
+        {
+            return _mapper.Read(address);
+        }
+
+        public void Write(ushort address, byte value)
+        {
+            _mapper.Write(address, value);
         }
     }
 }

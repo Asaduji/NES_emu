@@ -3,7 +3,7 @@ using NES_emu.CPU.Attributes;
 
 namespace NES_emu.CPU.Instructions
 {
-    [Instruction(0xD0, AddressingMode.REL, 2, true)]
+    [Instruction(0x10, AddressingMode.REL, 2, true)]
     public class BPL : IInstructionHandler
     {
         public static bool Execute(Cpu cpu)

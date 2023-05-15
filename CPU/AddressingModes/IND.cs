@@ -4,8 +4,8 @@
     {
         public static bool Fetch(Cpu cpu)
         {
-            byte highByte = cpu.ReadNext();
             byte lowByte = cpu.ReadNext();
+            byte highByte = cpu.ReadNext();            
 
             // 6502 bug, when the high byte of the target address is at the end of a page, the low byte
             // would be the first in the next page, but instead it just wraps around

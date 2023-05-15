@@ -3,7 +3,7 @@ using NES_emu.CPU.Attributes;
 
 namespace NES_emu.CPU.Instructions
 {
-    [Instruction(0xE8, AddressingMode.IMP, 2)]
+    [Instruction(0xC8, AddressingMode.IMP, 2)]
     public class INY : IInstructionHandler
     {
         public static bool Execute(Cpu cpu)

@@ -18,7 +18,7 @@ namespace NES_emu.CPU
 
         private readonly Bus _bus;
         private readonly Func<Cpu, bool>[] _addressingModes;
-        private readonly Instruction[] _opcodeTable = Enumerable.Range(0, 256).Select(i => new Instruction((byte)i, AddressingMode.IMP, 1)).ToArray();
+        private readonly Instruction[] _opcodeTable = Enumerable.Range(0, 256).Select(i => new Instruction((byte)i, AddressingMode.IMP, 2)).ToArray();
 
         //helpers
         public ushort CurrentAddress { get; set; }
@@ -170,14 +170,16 @@ namespace NES_emu.CPU
 
                 var pageChanged = _addressingModes[(int)instruction.AddressingMode](this);
 
+                var shouldAddCycle = instruction.Execute(this);
+
                 //some instructions take 1 extra cycle if the page changes when reading the data
                 //but in branches for example it only applies if the branch is taken, so Execute will
                 //return true if the extra cycle should be added in case a page is crossed
-                if (pageChanged && instruction.ExtraCycleOnPageCross && instruction.Execute(this))
+                if (pageChanged && instruction.ExtraCycleOnPageCross && shouldAddCycle)
                 {
                     ++Cycles;
                 }
-                Console.WriteLine($"Executed: (0x{CurrentOpcode}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC}");
+                Console.WriteLine($"Executed: (0x{CurrentOpcode:X2}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC:X4}");
             }
             --Cycles;
         }
