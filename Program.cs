@@ -1,6 +1,10 @@
 ﻿using NES_emu.BUS;
 using NES_emu.CARDTIGE;
 using NES_emu.CPU;
+using NES_emu.NES;
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 
 namespace NES_emu
 {
@@ -20,6 +24,26 @@ namespace NES_emu
 
             cpu.Reset();
 
+            cpu.PC = 0xC000; //test
+
+
+            //using var nes = new Nes(800, 600, "Nes");
+            
+            //nes.Run();
+            
+
+
+            /*
+            while (true)
+            {
+                cpu.Clock();
+                Console.ReadLine();
+                while (cpu.Cycles > 0) 
+                { 
+                   cpu.Clock(); 
+                }
+            }
+            */
             while (true)
             {
                 for (var i = 0; i < 29833; i++)

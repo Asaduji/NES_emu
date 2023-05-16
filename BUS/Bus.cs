@@ -39,7 +39,7 @@ namespace NES_emu.BUS
             }
             else if (address >= 0x2000 && address <= 0x3FFF)
             {
-                return 0x00;
+                return 0x00;//0xFF;
             }
 
             return 0;

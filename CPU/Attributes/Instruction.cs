@@ -10,7 +10,7 @@ namespace NES_emu.CPU.Attributes
         public int Cycles { get; set; }
         public bool ExtraCycleOnPageCross { get; set; }
         public Func<Cpu, bool> Execute { get; set; } = (cpu) => {
-            Console.WriteLine($"Got unimplemented instruction! Opcode: {cpu.CurrentOpcode:X2}");
+            Console.WriteLine($"Got unimplemented instruction! Opcode: {cpu.CurrentOpcode:X2}, PC: {cpu.PC:X4}");
             return false;
         };
         public string Name { get; set; } = "Unimplemented";

@@ -9,6 +9,8 @@ namespace NES_emu.CPU.Opcodes
     {
         public static bool Execute(Cpu cpu)
         {
+            cpu.SetFlag(Flag.I, true);
+            cpu.SetFlag(Flag.B, true);
             cpu.PushStack(cpu.P);
 
             return false;

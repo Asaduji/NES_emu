@@ -129,6 +129,7 @@ namespace NES_emu.CPU
             _bus.Write(address, data);
         }
 
+        //Interrupts
         public void Reset()
         {
             A = 0;
@@ -152,6 +153,51 @@ namespace NES_emu.CPU
 
             Cycles = 7;
         }
+
+        public void NMI()
+        {
+            PushStack((byte)(PC >> 8));
+            PushStack((byte)PC);
+
+            SetFlag(Flag.B, false);
+            SetFlag(Flag.I, true);
+
+            PushStack(P);
+
+            //Set pc as first instruction
+            byte lowByte = Read(0xFFFA);
+            byte highByte = Read(0xFFFB);
+
+            PC = (ushort)(highByte << 8 | lowByte);
+
+            Cycles = 7;
+        }
+
+        public void IRQ()
+        {
+            if (GetFlag(Flag.I))
+            {
+                return;
+            }
+
+            PushStack((byte)(PC >> 8));
+            PushStack((byte)PC);
+
+            SetFlag(Flag.B, false);
+            SetFlag(Flag.I, true);
+
+            PushStack(P);
+
+            //Set pc as first instruction
+            byte lowByte = Read(0xFFFA);
+            byte highByte = Read(0xFFFB);
+
+            PC = (ushort)(highByte << 8 | lowByte);
+
+            Cycles = 7;
+        }
+
+
 
         public void Clock()
         {
@@ -179,7 +225,7 @@ namespace NES_emu.CPU
                 {
                     ++Cycles;
                 }
-                Console.WriteLine($"Executed: (0x{CurrentOpcode:X2}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC:X4}");
+                //Console.WriteLine($"Executed: (0x{CurrentOpcode:X2}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC:X4}");
             }
             --Cycles;
         }

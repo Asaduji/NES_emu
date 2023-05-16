@@ -16,6 +16,7 @@ namespace NES_emu.CPU.Opcodes
             cpu.PushStack((byte)cpu.PC);           
 
             cpu.SetFlag(Flag.B, true);
+            cpu.SetFlag(Flag.I, true);
 
             cpu.PushStack(cpu.P);
 
