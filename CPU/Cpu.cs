@@ -225,7 +225,7 @@ namespace NES_emu.CPU
                 {
                     ++Cycles;
                 }
-                //Console.WriteLine($"Executed: (0x{CurrentOpcode:X2}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC:X4}");
+                //Console.WriteLine($"Executed: (0x{CurrentOpcode:X2}) {instruction.Name}, remaining cycles: {Cycles}, PC: {PC:X4}, A: {A:X2} X: {X:X2} Y: {Y:X2} S: {S:X2} P: {P:X2}");
             }
             --Cycles;
         }

@@ -12,7 +12,7 @@
             _chr = chr;
         }
 
-        public byte Read(ushort address)
+        public byte BusRead(ushort address)
         {
             if (address >= 0x6000 && address <= 0x7FFF)
             {
@@ -27,11 +27,11 @@
                 //if the rom is 16KB, this address range will just be a mirror
                 return _rom[_rom.Length > 0x4000 ? (address % 0xC000) + 0x4000 : address % 0xC000];
             }
-
+            
             return 0;
         }
 
-        public void Write(ushort address, byte value)
+        public void BusWrite(ushort address, byte value)
         {
             if (address >= 0x6000 && address <= 0x7FFF)
             {
@@ -48,6 +48,14 @@
             }
         }
 
+        public byte PpuRead(ushort address)
+        {
+            return _chr[address];
+        }
 
+        public void PpuWrite(ushort address, byte value)
+        {
+
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace NES_emu.CPU.Instructions
     [Instruction(0x4A, AddressingMode.ACC, 2)]
     [Instruction(0x46, AddressingMode.ZP, 5)]
     [Instruction(0x56, AddressingMode.ZPX, 6)]
-    [Instruction(0xEE, AddressingMode.ABS, 6)]
+    [Instruction(0x4E, AddressingMode.ABS, 6)]
     [Instruction(0x5E, AddressingMode.ABX, 7)]
     public class LSR : IInstructionHandler
     {

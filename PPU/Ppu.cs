@@ -1,15 +1,10 @@
-﻿using NES_emu.BUS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using NES_emu.CARDTIGE;
 
 namespace NES_emu.PPU
 {
     public class Ppu
     {
-        private readonly Bus _bus;
+        private readonly Cartridge _cart;
         //registers
         public byte PPUCTRL { get; set; }
         public byte PPUMASK { get; set; }
@@ -21,29 +16,23 @@ namespace NES_emu.PPU
         public byte PPUDATA { get; set; }
         public byte OAMDMA { get; set; }
 
-        public Ppu(Bus bus)
+        public Ppu(Cartridge cart)
         {
-            _bus = bus;
+            _cart = cart;
         }
 
         public void BusWrite(ushort address, byte data)
         {
-            _bus.Write(address, data);
+            if (address >= 0x2000 || address <= 0x3FFF)
+            {
+
+            }
         }
 
-        public void BusRead(ushort address, byte data)
+        public byte BusRead(ushort address)
         {
-            _bus.Write(address, data);
+            return 0;
         }
 
-        public void PpuWrite(ushort address, byte data)
-        {
-            _bus.Write(address, data);
-        }
-
-        public void PpuRead(ushort address, byte data)
-        {
-            _bus.Write(address, data);
-        }
     }
 }

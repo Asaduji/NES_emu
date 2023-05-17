@@ -8,7 +8,7 @@
             byte lowByte = (byte)(cpu.ReadNext() + cpu.Y);
 
             //no need to shift the high byte because it's 0
-            cpu.CurrentAddress = (ushort)(highByte | lowByte);
+            cpu.CurrentAddress = (ushort)((highByte | lowByte) & 0xFF);
 
             return false;
         }

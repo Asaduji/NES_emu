@@ -43,7 +43,7 @@ namespace NES_emu.CARDTIGE
 
             var mapperNumber = (byte)((flags6 >> 4) | (flags7 & 0xF0));
 
-            Console.WriteLine($"Got mapper number {mapperNumber}");
+            Console.WriteLine($"Got mapper number {mapperNumber}, prg rom: {_prgROM.Length}, chr rom: {_chrROM.Length}");
 
             if (mapperNumber == 0) 
             { 
@@ -51,14 +51,24 @@ namespace NES_emu.CARDTIGE
             }
         }
 
-        public byte Read(ushort address)
+        public byte BusRead(ushort address)
         {
-            return _mapper.Read(address);
+            return _mapper.BusRead(address);
         }
 
-        public void Write(ushort address, byte value)
+        public void BusWrite(ushort address, byte value)
         {
-            _mapper.Write(address, value);
+            _mapper.BusWrite(address, value);
+        }
+
+        public byte PpuRead(ushort address)
+        {
+            return _mapper.PpuRead(address);
+        }
+
+        public void PpuWrite(ushort address, byte value)
+        {
+            _mapper.PpuWrite(address, value);
         }
     }
 }

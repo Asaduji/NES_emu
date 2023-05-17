@@ -16,7 +16,7 @@
                 ushort indirect = (ushort)(highByte << 8 | lowByte);
 
                 // Read the target address and set it
-                cpu.CurrentAddress = (ushort)(cpu.Read(indirect) << 8 | cpu.Read((ushort)(indirect & 0xFF00)));
+                cpu.CurrentAddress = (ushort)(cpu.Read((ushort)(indirect & 0xFF00)) << 8 | cpu.Read(indirect));
             }
             else
             {
@@ -24,7 +24,7 @@
                 ushort indirect = (ushort)(highByte << 8 | lowByte);
 
                 // Read the target address and set it
-                cpu.CurrentAddress = (ushort)(cpu.Read(indirect) << 8 | cpu.Read((ushort)(indirect + 1)));
+                cpu.CurrentAddress = (ushort)(cpu.Read((ushort)(indirect + 1)) << 8 | cpu.Read(indirect));
             }
 
 
