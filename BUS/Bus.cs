@@ -23,7 +23,12 @@ namespace NES_emu.BUS
                 return _ram[address % 0x0800];
             }
             //ppu registers, range: $2000 - $2007, 0x08 size, mirrors up to 0x3FFF
-            if (address >= 0x2000 && address <= 0x3FFF)
+            else if (address >= 0x2000 && address <= 0x3FFF)
+            {
+                return _ppu.BusRead(address);
+            }
+            //OAM DMA
+            else if (address == 0x4014)
             {
                 return _ppu.BusRead(address);
             }
@@ -44,7 +49,12 @@ namespace NES_emu.BUS
                 _ram[address % 0x0800] = data;
             }
             //ppu registers, range: $2000 - $2007, 0x08 size, mirrors up to 0x3FFF
-            if (address >= 0x2000 && address <= 0x3FFF)
+            else if (address >= 0x2000 && address <= 0x3FFF)
+            {
+                _ppu.BusWrite(address, data);
+            }
+            //OAM DMA
+            else if (address == 0x4014)
             {
                 _ppu.BusWrite(address, data);
             }
