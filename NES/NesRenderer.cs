@@ -1,4 +1,5 @@
-﻿using SDL2;
+﻿using ImGuiNET;
+using SDL2;
 
 namespace NES_emu.NES
 {
@@ -14,14 +15,11 @@ namespace NES_emu.NES
         private int _scale = 1;
         private readonly int _width = 256;
         private readonly int _height = 240;
-        private int _scaledWidth = 256;
-        private int _scaledHeight = 240;
 
         public NesRenderer(int scale = 1)
         {
             //Set scale first
             _scale = Math.Clamp(scale, 1, 5);
-            SetScaledResolution();
 
             // Initialize SDL
             _ = SDL.SDL_Init(SDL.SDL_INIT_VIDEO);
@@ -33,7 +31,7 @@ namespace NES_emu.NES
             _renderer = SDL.SDL_CreateRenderer(_window, -1, SDL.SDL_RendererFlags.SDL_RENDERER_ACCELERATED);
 
             // Allocate first pixel buffer
-            _pixelsTexture = SDL.SDL_CreateTexture(_renderer, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, _width * _scale, _height * _scale);
+            _pixelsTexture = SDL.SDL_CreateTexture(_renderer, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, _width, _height);
         }
 
         public void SetScale(int scale)
@@ -44,26 +42,19 @@ namespace NES_emu.NES
                 return;
             }
             _scale = Math.Clamp(scale, 1, 5);
-            SetScaledResolution();
 
             SDL.SDL_DestroyTexture(_pixelsTexture);
 
             // Allocate new pixel buffer
-            _pixelsTexture = SDL.SDL_CreateTexture(_renderer, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, _width * _scale, _height * _scale);
+            _pixelsTexture = SDL.SDL_CreateTexture(_renderer, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, _width, _height);
 
             SDL.SDL_SetWindowSize(_window, _width * _scale, _height * _scale);
-        }
-
-        private void SetScaledResolution()
-        {
-            _scaledWidth = _width * _scale;
-            _scaledHeight = _height * _scale;
         }
 
         public void RenderFrame()
         {
             // Update the texture with pixel data
-            _ = SDL.SDL_UpdateTexture(_pixelsTexture, IntPtr.Zero, IntPtr.Zero, _width * 4 * _scale);
+            _ = SDL.SDL_UpdateTexture(_pixelsTexture, IntPtr.Zero, IntPtr.Zero, _width);
 
             // Clear the renderer
             _ = SDL.SDL_RenderClear(_renderer);
@@ -94,24 +85,13 @@ namespace NES_emu.NES
                 return;
             }
 
-            var scaledX = x * _scale;
-            var scaledY = y * _scale;
-
             // Calculate the starting index of the block of pixels
-            var startIndex = scaledY * _scaledWidth + scaledX;
             var color = (0xFF << 24) | (r << 16) | (g << 8) | b;
 
             unsafe
             {
                 var buffer = (int*)_pixelsBuffer;
-              
-                for (int i = 0; i < _scale; i++)
-                {
-                    for (int j = 0; j < _scale; j++)
-                    {
-                        buffer[startIndex + i * _scaledWidth + j] = color;
-                    }
-                }
+                buffer[y * _width + x] = color;
             }
         }
 
