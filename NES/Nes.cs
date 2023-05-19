@@ -10,7 +10,7 @@ namespace NES_emu.NES
     public class Nes : IDisposable
     {
         //Render loop
-        const float TARGET_FPS = 144.0f;
+        const float TARGET_FPS = 60.0f;
         const float TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
         private long _previousTime = Stopwatch.GetTimestamp();
         private readonly float _frequency = Stopwatch.Frequency;
@@ -60,7 +60,7 @@ namespace NES_emu.NES
                 _previousTime = currentTime;
 
                 // Sleep for a short time to reduce CPU usage
-                Thread.Sleep(1);
+                //Thread.Sleep(1);
             }
         }
 
@@ -71,17 +71,47 @@ namespace NES_emu.NES
             GC.SuppressFinalize(this);
         }
 
-        static bool decreasing = false;
-        static int index = 0;
+        static int x = 0;
+        static int y = 0;    
 
         private void Update(float delta)
         {
             //First, handle events
             _renderer.ProcessEvents();
 
-            if (_renderer.KeyboardState.IsKeyDown(Keys.Space))
+            if (_renderer.KeyboardState.IsKeyDown(Keys.Up))
             {
-                _renderer.SetScale(2);
+                --y;
+
+                if (y < 0)
+                {
+                    y = 239;
+                }
+            }
+            if (_renderer.KeyboardState.IsKeyDown(Keys.Down))
+            {
+                ++y;
+
+                if (y > 239)
+                {
+                    y = 0;
+                }
+            }
+            if (_renderer.KeyboardState.IsKeyDown(Keys.Left))
+            {
+                --x;
+                if (x < 0)
+                {
+                    x = 255;
+                }
+            }
+            if (_renderer.KeyboardState.IsKeyDown(Keys.Right))
+            {
+                ++x;
+                if (x > 255)
+                {
+                    x = 0;
+                }
             }
 
 
@@ -107,34 +137,16 @@ namespace NES_emu.NES
                     _renderer.SetPixel(i, j, 0, 0, 0);
                 }
             }
-            
+
 
             //Do small animation
-            for (var i = index; i < 256; i++)
+
+            for (var i = 0; i < 10; i++)
             {
-                for (var j = index; j < 240; j++)
-                {
-                    _renderer.SetPixel(i, j, 255, 0, 0);
-                }
+                _renderer.SetPixel(x, y + i, 255, 0, 0);
             }
 
-            if (decreasing)
-            {
-                --index;
-            }
-            else
-            {
-                ++index;
-            }
-
-            if (index >= 100)
-            {
-                decreasing = true;
-            }
-            else if (index <= 0)
-            {
-                decreasing = false;
-            }
+          
 
             
             _renderer.RenderFrame();

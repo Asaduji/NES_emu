@@ -17,15 +17,14 @@ namespace NES_emu.NES
         private int _textureId;
         private int[] _indices = Array.Empty<int>();
         private int _textureLocation;
+        public bool Closed { get; private set; }
+        public KeyboardState KeyboardState => _window.KeyboardState;
 
         //Window
         private int _scale = 1;
         private readonly int _width = 256;
         private readonly int _height = 240;
         private readonly byte[] _bitmap;
-
-        public bool Closed { get; private set; }
-        public KeyboardState KeyboardState => _window.KeyboardState;
 
         public NesRenderer(int scale = 1)
         {
@@ -48,16 +47,20 @@ namespace NES_emu.NES
             InitializeAll();
         }
 
-        public void SetScale(int scale = 0)
+        public void SetScale(int scale)
         {
             if (scale < 1 || scale > 5 || scale == _scale)
             {
                 return;
             }
 
+            DeleteAll();
+
             _scale = scale;
 
             _window.Size = new Vector2i(_width * _scale, _height * _scale);
+
+            InitializeAll();
         }
 
         private void InitializeAll()
