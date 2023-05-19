@@ -4,6 +4,7 @@ using NES_emu.CPU;
 using NES_emu.NES;
 using NES_emu.PPU;
 using SDL2;
+using System.Drawing;
 using static SDL2.SDL;
 
 namespace NES_emu
@@ -24,12 +25,12 @@ namespace NES_emu
 
             cpu.Reset();
 
+            using var renderer = new NesRenderer(2);
+
             cpu.PC = 0xC000;
-            using var renderer = new NesRenderer(4);
-            renderer.RenderFrame();
 
             /*
-            v
+            
 
             // Example usage: Set a pixel at (100, 100) with RGB values (255, 0, 0)
             for (var i = 0; i < 255; i++)
@@ -97,9 +98,24 @@ namespace NES_emu
             */
 
 
-
             while (true)
             {
+                renderer.BeginDraw();
+                for (var i = 0; i < 256; i++)
+                {
+                    for (var j = 0; j < 240; j++)
+                    {
+                        renderer.SetPixel(i, j, 255, 0, 0);
+                    }
+                }
+                renderer.EndDraw();
+
+                renderer.RenderFrame();
+                cpu.Clock();
+                while (cpu.Cycles > 0)
+                {
+                    cpu.Clock();
+                }
                 while (SDL_PollEvent(out SDL_Event e) != 0)
                 {
                     /*
@@ -123,6 +139,11 @@ namespace NES_emu
                         {
                             cpu.Clock();
                         }                     
+                    }
+
+                    if (e.type == SDL_EventType.SDL_KEYDOWN && e.key.keysym.sym == SDL_Keycode.SDLK_m)
+                    {
+                        Console.WriteLine($"PC: {cpu.PC:X4}");
                     }
                 }
             }

@@ -53,16 +53,16 @@ namespace NES_emu.PPU
             //write only
             else if (address == 0x2006)
             {
-                return 0;
+                return;
             }
             else if (address == 0x2007)
             {
-                return PPUDATA;
+                
             }
             //write only
             else if (address == 0x4014)
             {
-                return 0;
+                return;
             }
         }
 
