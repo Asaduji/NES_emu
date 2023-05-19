@@ -2,17 +2,16 @@
 using NES_emu.CARDTIGE;
 using NES_emu.CPU;
 using NES_emu.PPU;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
-using static SDL2.SDL;
 
 namespace NES_emu.NES
 {
     public class Nes : IDisposable
     {
         //Render loop
-        const float TARGET_FPS = 60.0f;
+        const float TARGET_FPS = 144.0f;
         const float TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
-        private bool _running = true;
         private long _previousTime = Stopwatch.GetTimestamp();
         private readonly float _frequency = Stopwatch.Frequency;
         private float _accumulatedTime = 0.0f;
@@ -39,7 +38,7 @@ namespace NES_emu.NES
         {
             _cpu.Reset();
 
-            while (_running)
+            while (!_renderer.Closed)
             {
                 var currentTime = Stopwatch.GetTimestamp();
 
@@ -78,19 +77,13 @@ namespace NES_emu.NES
         private void Update(float delta)
         {
             //First, handle events
-            while (SDL_PollEvent(out var e) != 0)
-            {
-                if (e.type == SDL_EventType.SDL_QUIT)
-                {
-                    _running = false;
-                    return;
-                }
+            _renderer.ProcessEvents();
 
-                if (e.type == SDL_EventType.SDL_KEYDOWN && e.key.keysym.sym == SDL_Keycode.SDLK_p)
-                {
-                    Console.WriteLine($"PC: {_cpu.PC:X4}");
-                }
+            if (_renderer.KeyboardState.IsKeyDown(Keys.Space))
+            {
+                _renderer.SetScale(2);
             }
+
 
             //Run emulation for 1 frame
             _cpu.Clock();
@@ -99,10 +92,14 @@ namespace NES_emu.NES
                 _cpu.Clock();
             }
 
+
+
+
+
             //Render the current state
-            _renderer.BeginDraw();
 
             //Clear screen
+            
             for (var i = 0; i < 256; i++)
             {
                 for (var j = 0; j < 240; j++)
@@ -110,6 +107,7 @@ namespace NES_emu.NES
                     _renderer.SetPixel(i, j, 0, 0, 0);
                 }
             }
+            
 
             //Do small animation
             for (var i = index; i < 256; i++)
@@ -138,7 +136,7 @@ namespace NES_emu.NES
                 decreasing = false;
             }
 
-            _renderer.EndDraw();
+            
             _renderer.RenderFrame();
         }
     }

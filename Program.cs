@@ -9,7 +9,7 @@ namespace NES_emu
 
             var rom = File.ReadAllBytes(Directory.GetCurrentDirectory() + @"\nestest.nes");
 
-            var nes = new Nes(rom, 4);
+            var nes = new Nes(rom, 5);
 
             nes.Run();
         }
