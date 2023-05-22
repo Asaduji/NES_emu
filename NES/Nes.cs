@@ -3,6 +3,7 @@ using NES_emu.CARDTIGE;
 using NES_emu.CPU;
 using NES_emu.PPU;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using System;
 using System.Diagnostics;
 
 namespace NES_emu.NES
@@ -10,11 +11,11 @@ namespace NES_emu.NES
     public class Nes : IDisposable
     {
         //Render loop
-        const float TARGET_FPS = 60.0f;
-        const float TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
+        const double TARGET_FPS = 60.0f;
+        const double TARGET_FRAME_TIME = 1.0f / TARGET_FPS;
         private long _previousTime = Stopwatch.GetTimestamp();
-        private readonly float _frequency = Stopwatch.Frequency;
-        private float _accumulatedTime = 0.0f;
+        private readonly double _frequency = Stopwatch.Frequency;
+        private double _accumulatedTime = 0.0f;
         private readonly Stopwatch _stopWatch = new();
         private readonly NesRenderer _renderer;
 
@@ -56,10 +57,11 @@ namespace NES_emu.NES
                     _accumulatedTime -= TARGET_FRAME_TIME;
                 }
 
+                _renderer.RenderFrame();
+
                 // Set the timestamp of the previous frame to the current frame
                 _previousTime = currentTime;
 
-                // Sleep for a short time to reduce CPU usage
                 //Thread.Sleep(1);
             }
         }
@@ -71,47 +73,34 @@ namespace NES_emu.NES
             GC.SuppressFinalize(this);
         }
 
-        static int x = 0;
-        static int y = 0;    
+        static float x = 0;
+        static float y = 0;    
+        
 
         private void Update(float delta)
         {
             //First, handle events
             _renderer.ProcessEvents();
 
+            float speed = 250.0f;
+
+            float distance = speed * delta;
+
             if (_renderer.KeyboardState.IsKeyDown(Keys.Up))
             {
-                --y;
-
-                if (y < 0)
-                {
-                    y = 239;
-                }
+                y = (y - distance + 240) % 240;
             }
             if (_renderer.KeyboardState.IsKeyDown(Keys.Down))
             {
-                ++y;
-
-                if (y > 239)
-                {
-                    y = 0;
-                }
+                y = (y + distance) % 240;
             }
             if (_renderer.KeyboardState.IsKeyDown(Keys.Left))
             {
-                --x;
-                if (x < 0)
-                {
-                    x = 255;
-                }
+                x = (x - distance + 256) % 256;
             }
             if (_renderer.KeyboardState.IsKeyDown(Keys.Right))
             {
-                ++x;
-                if (x > 255)
-                {
-                    x = 0;
-                }
+                x = (x + distance) % 256;
             }
 
 
@@ -121,12 +110,6 @@ namespace NES_emu.NES
             {
                 _cpu.Clock();
             }
-
-
-
-
-
-            //Render the current state
 
             //Clear screen
             
@@ -143,13 +126,9 @@ namespace NES_emu.NES
 
             for (var i = 0; i < 10; i++)
             {
-                _renderer.SetPixel(x, y + i, 255, 0, 0);
+                _renderer.SetPixel((int)MathF.Round(x), (int)MathF.Round(y) + i, 255, 0, 0);
             }
-
-          
-
-            
-            _renderer.RenderFrame();
+        
         }
     }
 }
